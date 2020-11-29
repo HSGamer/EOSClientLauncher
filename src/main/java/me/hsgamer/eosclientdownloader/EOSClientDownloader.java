@@ -5,8 +5,12 @@ import com.google.api.services.drive.Drive;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.GeneralSecurityException;
+import java.util.Comparator;
 import java.util.logging.*;
+import java.util.stream.Stream;
 
 public class EOSClientDownloader {
     private static final String FILE_NAME = "EOS-Client.zip";
@@ -37,11 +41,15 @@ public class EOSClientDownloader {
             drive.files().get(FILE_DRIVE_ID).setSupportsTeamDrives(true).executeMediaAndDownloadTo(new FileOutputStream(downloadFile));
             LOGGER.info("Downloaded to '" + downloadFile.getCanonicalPath() + "'");
 
-            if (UNCOMPRESSED_FOLDER.exists() && UNCOMPRESSED_FOLDER.delete()) {
+            if (UNCOMPRESSED_FOLDER.exists()) {
+                try (Stream<Path> stream = Files.walk(UNCOMPRESSED_FOLDER.toPath())) {
+                    stream.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+                }
                 LOGGER.info("Deleted existed folder");
             }
+
             ZipUtils.unzip(downloadFile, UNCOMPRESSED_FOLDER, LOGGER);
-            if (downloadFile.exists() && downloadFile.delete()) {
+            if (Files.deleteIfExists(downloadFile.toPath())) {
                 LOGGER.info("Deleted '" + downloadFile.getAbsolutePath() + "'");
             }
         } catch (GeneralSecurityException | IOException e) {
