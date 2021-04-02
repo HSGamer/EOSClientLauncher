@@ -13,18 +13,17 @@ import java.util.logging.*;
 import java.util.stream.Stream;
 
 public class EOSClientDownloader {
-    private static final String FILE_NAME = "EOS-Client.zip";
-    private static final String FILE_DRIVE_ID = "15orxKbmGm4foV5Lpc0RYnz9Imvp3IbWF";
-    private static final File UNCOMPRESSED_FOLDER = new File("Uncompressed");
     private static final Logger LOGGER = Logger.getLogger("Downloader");
+    private static final MainConfig MAIN_CONFIG = new MainConfig();
 
     static {
+        MAIN_CONFIG.setup();
         ConsoleHandler handler = new ConsoleHandler();
         handler.setLevel(Level.INFO);
         handler.setFormatter(new Formatter() {
             @Override
             public String format(LogRecord logRecord) {
-                return "[" + logRecord.getLoggerName() + "-" + logRecord.getLevel() + "] " + logRecord.getMessage() + "\n";
+                return "[" + logRecord.getLevel() + "] " + logRecord.getMessage() + "\n";
             }
         });
         LOGGER.addHandler(handler);
@@ -32,23 +31,28 @@ public class EOSClientDownloader {
     }
 
     public static void main(String... args) {
+        String filename = MainConfig.FILE_NAME.getValue();
+        String driveId = MainConfig.FILE_DRIVE_ID.getValue();
+        String uncompressedPath = MainConfig.FILE_UNCOMPRESSED_PATH.getPath();
+
         try {
             Drive drive = DriveUtils.getService();
-            File downloadFile = new File(FILE_NAME);
+            File downloadFile = new File(filename);
             if (!downloadFile.exists() && downloadFile.createNewFile()) {
                 LOGGER.info("Created '" + downloadFile.getCanonicalPath() + "'");
             }
-            drive.files().get(FILE_DRIVE_ID).setSupportsTeamDrives(true).executeMediaAndDownloadTo(new FileOutputStream(downloadFile));
+            drive.files().get(driveId).setSupportsTeamDrives(true).executeMediaAndDownloadTo(new FileOutputStream(downloadFile));
             LOGGER.info("Downloaded to '" + downloadFile.getCanonicalPath() + "'");
 
-            if (UNCOMPRESSED_FOLDER.exists()) {
-                try (Stream<Path> stream = Files.walk(UNCOMPRESSED_FOLDER.toPath())) {
+            File uncompressedFolder = new File(".", uncompressedPath);
+            if (uncompressedFolder.exists()) {
+                try (Stream<Path> stream = Files.walk(uncompressedFolder.toPath())) {
                     stream.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
                 }
                 LOGGER.info("Deleted existed folder");
             }
 
-            ZipUtils.unzip(downloadFile, UNCOMPRESSED_FOLDER, LOGGER);
+            ZipUtils.unzip(downloadFile, uncompressedFolder, LOGGER);
             if (Files.deleteIfExists(downloadFile.toPath())) {
                 LOGGER.info("Deleted '" + downloadFile.getAbsolutePath() + "'");
             }

@@ -11,10 +11,10 @@ import java.util.zip.ZipInputStream;
 
 public class ZipUtils {
     private ZipUtils() {
-
+        // EMPTY
     }
 
-    protected static void unzip(File zipFile, File destination, Logger logger) throws IOException {
+    static void unzip(File zipFile, File destination, Logger logger) throws IOException {
         try (ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile))) {
             ZipEntry zipEntry = zis.getNextEntry();
             while (zipEntry != null) {
