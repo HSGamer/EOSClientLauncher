@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -14,7 +13,7 @@ public class ZipUtils {
         // EMPTY
     }
 
-    static void unzip(File zipFile, File destination, Logger logger) throws IOException {
+    static void unzip(File zipFile, File destination) throws IOException {
         try (ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile))) {
             ZipEntry zipEntry = zis.getNextEntry();
             while (zipEntry != null) {
@@ -30,7 +29,7 @@ public class ZipUtils {
                     }
                     Files.copy(zis, newFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 }
-                logger.info("Uncompressed to '" + newFile.getAbsolutePath() + "'");
+                EOSClientDownloader.LOGGER.info("Uncompressed to '" + newFile.getAbsolutePath() + "'");
                 zipEntry = zis.getNextEntry();
             }
             zis.closeEntry();

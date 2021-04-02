@@ -13,7 +13,8 @@ import java.util.logging.*;
 import java.util.stream.Stream;
 
 public class EOSClientDownloader {
-    private static final Logger LOGGER = Logger.getLogger("Downloader");
+    static final Logger LOGGER = Logger.getLogger("Downloader");
+
     private static final MainConfig MAIN_CONFIG = new MainConfig();
 
     static {
@@ -33,7 +34,7 @@ public class EOSClientDownloader {
     public static void main(String... args) {
         String filename = MainConfig.FILE_NAME.getValue();
         String driveId = MainConfig.FILE_DRIVE_ID.getValue();
-        String uncompressedPath = MainConfig.FILE_UNCOMPRESSED_PATH.getPath();
+        String uncompressedPath = MainConfig.FILE_UNCOMPRESSED_PATH.getValue();
 
         try {
             Drive drive = DriveUtils.getService();
@@ -52,7 +53,7 @@ public class EOSClientDownloader {
                 LOGGER.info("Deleted existed folder");
             }
 
-            ZipUtils.unzip(downloadFile, uncompressedFolder, LOGGER);
+            ZipUtils.unzip(downloadFile, uncompressedFolder);
             if (Files.deleteIfExists(downloadFile.toPath())) {
                 LOGGER.info("Deleted '" + downloadFile.getAbsolutePath() + "'");
             }
