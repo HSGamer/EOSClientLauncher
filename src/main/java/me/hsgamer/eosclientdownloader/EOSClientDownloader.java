@@ -54,7 +54,7 @@ public class EOSClientDownloader {
             }
 
             ZipUtils.unzip(downloadFile, uncompressedFolder);
-            if (Files.deleteIfExists(downloadFile.toPath())) {
+            if (MainConfig.FILE_DELETE_AFTER_UNCOMPRESSED.getValue() && Files.deleteIfExists(downloadFile.toPath())) {
                 LOGGER.info("Deleted '" + downloadFile.getAbsolutePath() + "'");
             }
         } catch (GeneralSecurityException | IOException e) {

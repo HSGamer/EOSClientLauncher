@@ -1,8 +1,10 @@
 package me.hsgamer.eosclientdownloader;
 
+import me.hsgamer.hscore.config.BaseConfigPath;
 import me.hsgamer.hscore.config.CommentablePath;
 import me.hsgamer.hscore.config.ConfigPath;
 import me.hsgamer.hscore.config.PathableConfig;
+import me.hsgamer.hscore.config.path.BooleanConfigPath;
 import me.hsgamer.hscore.config.path.StringConfigPath;
 import me.hsgamer.hscore.config.simpleconfiguration.SimpleConfig;
 import org.simpleyaml.configuration.file.YamlFile;
@@ -28,6 +30,10 @@ public class MainConfig extends PathableConfig {
     );
     public static final ConfigPath<String> FILE_UNCOMPRESSED_PATH = new CommentablePath<>(
             new StringConfigPath("file.uncompressed-path", "Uncompressed"),
+            "The uncompressed folder"
+    );
+    public static final ConfigPath<Boolean> FILE_DELETE_AFTER_UNCOMPRESSED = new CommentablePath<>(
+            new BooleanConfigPath("file.delete-after-uncompressed", true),
             "The uncompressed folder"
     );
 
