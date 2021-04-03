@@ -3,6 +3,8 @@
 * This is a simple program to download the EOS Client
 * I've seen the news that you need to re-download the client on every exam days, which is hilarious
 * I'm lazy, so I made my own tool to automatically download it
+## Download
+* Download the jar file from [here](https://github.com/HSGamer/EOSClientDownloader/releases/latest)
 ## How to setup
 0. Create your Drive project and get its Client ID and Client Secret
     * [The Tutorial](https://theonetechnologies.com/blog/post/how-to-get-google-app-client-id-and-client-secret)
