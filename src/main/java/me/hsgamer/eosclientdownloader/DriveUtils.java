@@ -14,6 +14,7 @@ import com.google.api.services.drive.DriveScopes;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.List;
@@ -45,7 +46,7 @@ public class DriveUtils {
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 
-    static Drive getService() throws IOException, GeneralSecurityException {
+    private static Drive getService() throws IOException, GeneralSecurityException {
         if (service == null) {
             final NetHttpTransport netHttpTransport = GoogleNetHttpTransport.newTrustedTransport();
             service = new Drive.Builder(netHttpTransport, JSON_FACTORY, getCredentials(netHttpTransport))
@@ -53,5 +54,9 @@ public class DriveUtils {
                     .build();
         }
         return service;
+    }
+
+    protected static InputStream getFileAsInputStream(String driveId) throws IOException, GeneralSecurityException {
+        return getService().files().get(driveId).setSupportsTeamDrives(true).executeMediaAsInputStream();
     }
 }

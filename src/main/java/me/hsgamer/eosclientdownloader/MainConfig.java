@@ -1,6 +1,5 @@
 package me.hsgamer.eosclientdownloader;
 
-import me.hsgamer.hscore.config.BaseConfigPath;
 import me.hsgamer.hscore.config.CommentablePath;
 import me.hsgamer.hscore.config.ConfigPath;
 import me.hsgamer.hscore.config.PathableConfig;
@@ -34,10 +33,14 @@ public class MainConfig extends PathableConfig {
     );
     public static final ConfigPath<Boolean> FILE_DELETE_AFTER_UNCOMPRESSED = new CommentablePath<>(
             new BooleanConfigPath("file.delete-after-uncompressed", true),
-            "The uncompressed folder"
+            "Should the downloaded file be deleted after uncompressed ?"
+    );
+    public static final ConfigPath<Boolean> FILE_DELETE_EXISTED_UNCOMPRESSED = new CommentablePath<>(
+            new BooleanConfigPath("file.delete-existed-files", false),
+            "Should the existed files be deleted before uncompressing ?"
     );
 
     public MainConfig() {
-        super(new SimpleConfig(new File(".", "config.yml"), YamlFile::loadConfiguration));
+        super(new SimpleConfig(new File(".", "config.yml"), file -> YamlFile.loadConfiguration(file, true)));
     }
 }

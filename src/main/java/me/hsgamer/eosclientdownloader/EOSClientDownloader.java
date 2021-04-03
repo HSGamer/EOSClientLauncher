@@ -1,10 +1,11 @@
 package me.hsgamer.eosclientdownloader;
 
-import com.google.api.services.drive.Drive;
+import com.google.api.client.util.IOUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.GeneralSecurityException;
@@ -36,17 +37,22 @@ public class EOSClientDownloader {
         String driveId = MainConfig.FILE_DRIVE_ID.getValue();
         String uncompressedPath = MainConfig.FILE_UNCOMPRESSED_PATH.getValue();
 
+        boolean deleteExistedFiles = MainConfig.FILE_DELETE_EXISTED_UNCOMPRESSED.getValue();
+        boolean deleteAfterUncompressed = MainConfig.FILE_DELETE_AFTER_UNCOMPRESSED.getValue();
+
         try {
-            Drive drive = DriveUtils.getService();
             File downloadFile = new File(filename);
             if (!downloadFile.exists() && downloadFile.createNewFile()) {
                 LOGGER.info("Created '" + downloadFile.getCanonicalPath() + "'");
             }
-            drive.files().get(driveId).setSupportsTeamDrives(true).executeMediaAndDownloadTo(new FileOutputStream(downloadFile));
+
+            FileOutputStream fileOutputStream = new FileOutputStream(downloadFile);
+            InputStream downloadStream = DriveUtils.getFileAsInputStream(driveId);
+            IOUtils.copy(downloadStream, fileOutputStream);
             LOGGER.info("Downloaded to '" + downloadFile.getCanonicalPath() + "'");
 
             File uncompressedFolder = new File(".", uncompressedPath);
-            if (uncompressedFolder.exists()) {
+            if (deleteExistedFiles && uncompressedFolder.exists()) {
                 try (Stream<Path> stream = Files.walk(uncompressedFolder.toPath())) {
                     stream.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
                 }
@@ -54,7 +60,7 @@ public class EOSClientDownloader {
             }
 
             ZipUtils.unzip(downloadFile, uncompressedFolder);
-            if (MainConfig.FILE_DELETE_AFTER_UNCOMPRESSED.getValue() && Files.deleteIfExists(downloadFile.toPath())) {
+            if (deleteAfterUncompressed && Files.deleteIfExists(downloadFile.toPath())) {
                 LOGGER.info("Deleted '" + downloadFile.getAbsolutePath() + "'");
             }
         } catch (GeneralSecurityException | IOException e) {
