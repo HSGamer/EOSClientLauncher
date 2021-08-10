@@ -14,7 +14,7 @@ public class ZipUtils {
     }
 
     protected static void unzip(File zipFile, File destination) throws IOException {
-        try (ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile))) {
+        try (FileInputStream fis = new FileInputStream(zipFile); ZipInputStream zis = new ZipInputStream(fis)) {
             ZipEntry zipEntry = zis.getNextEntry();
             while (zipEntry != null) {
                 File newFile = new File(destination, zipEntry.getName());

@@ -7,8 +7,11 @@ import me.hsgamer.hscore.config.path.BooleanConfigPath;
 import me.hsgamer.hscore.config.path.StringConfigPath;
 import me.hsgamer.hscore.config.simpleconfiguration.SimpleConfig;
 import org.simpleyaml.configuration.file.YamlFile;
+import org.simpleyaml.exceptions.InvalidConfigurationException;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
 
 public class MainConfig extends PathableConfig {
     public static final ConfigPath<String> CLIENT_ID = new CommentablePath<>(
@@ -41,6 +44,13 @@ public class MainConfig extends PathableConfig {
     );
 
     public MainConfig() {
-        super(new SimpleConfig(new File(".", "config.yml"), file -> YamlFile.loadConfiguration(file, true)));
+        super(new SimpleConfig<>(new File(".", "config.yml"), new YamlFile(), (file, yamlFile) -> {
+            yamlFile.setConfigurationFile(file);
+            try {
+                yamlFile.loadWithComments();
+            } catch (InvalidConfigurationException | IOException e) {
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
+            }
+        }));
     }
 }

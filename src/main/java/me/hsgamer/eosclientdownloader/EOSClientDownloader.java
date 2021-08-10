@@ -1,6 +1,6 @@
 package me.hsgamer.eosclientdownloader;
 
-import com.google.api.client.util.IOUtils;
+import com.google.common.io.ByteStreams;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -48,7 +48,7 @@ public class EOSClientDownloader {
 
             FileOutputStream fileOutputStream = new FileOutputStream(downloadFile);
             InputStream downloadStream = DriveUtils.getFileAsInputStream(driveId);
-            IOUtils.copy(downloadStream, fileOutputStream);
+            ByteStreams.copy(downloadStream, fileOutputStream);
             LOGGER.info("Downloaded to '" + downloadFile.getCanonicalPath() + "'");
 
             File uncompressedFolder = new File(".", uncompressedPath);
@@ -60,7 +60,7 @@ public class EOSClientDownloader {
             }
 
             ZipUtils.unzip(downloadFile, uncompressedFolder);
-
+            fileOutputStream.close();
             if (deleteAfterUncompressed && Files.deleteIfExists(downloadFile.toPath())) {
                 LOGGER.info("Deleted '" + downloadFile.getCanonicalPath() + "'");
             }
