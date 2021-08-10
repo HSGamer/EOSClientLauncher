@@ -27,7 +27,7 @@ public class MainConfig extends PathableConfig {
             "The file's name"
     );
     public static final ConfigPath<String> FILE_DRIVE_ID = new CommentablePath<>(
-            new StringConfigPath("file.drive-id", "15orxKbmGm4foV5Lpc0RYnz9Imvp3IbWF"),
+            new StringConfigPath("file.drive-id", "1fvbPW7nrQ7jGaXLzfAC11FMzZ6zrGRAA"),
             "The file's drive ID"
     );
     public static final ConfigPath<String> FILE_UNCOMPRESSED_PATH = new CommentablePath<>(
