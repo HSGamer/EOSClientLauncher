@@ -12,6 +12,7 @@ import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import me.hsgamer.eosclientdownloader.config.MainConfig;
+import me.hsgamer.eosclientdownloader.data.FileData;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +20,7 @@ import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class DriveUtils {
     private static final String APPLICATION_NAME = "FPT-EOSClient Downloader";
@@ -47,17 +49,31 @@ public final class DriveUtils {
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 
-    public static void initService() throws IOException, GeneralSecurityException {
+    public static Drive getService() throws IOException, GeneralSecurityException {
         if (service == null) {
             final NetHttpTransport netHttpTransport = GoogleNetHttpTransport.newTrustedTransport();
             service = new Drive.Builder(netHttpTransport, JSON_FACTORY, getCredentials(netHttpTransport))
                     .setApplicationName(APPLICATION_NAME)
                     .build();
         }
+        return service;
     }
 
-    public static InputStream getFileAsInputStream(String driveId) throws IOException, GeneralSecurityException {
-        initService();
-        return service.files().get(driveId).setSupportsTeamDrives(true).executeMediaAsInputStream();
+    public static InputStream getFileAsInputStream(String fileId) throws IOException, GeneralSecurityException {
+        return getService().files().get(fileId).setSupportsTeamDrives(true).executeMediaAsInputStream();
+    }
+
+    public static List<FileData> getFiles(String folderId) throws GeneralSecurityException, IOException {
+        return getService().files()
+                .list()
+                .setQ("'" + folderId + "' in parents and trashed = false and name contains '.zip'")
+                .setIncludeTeamDriveItems(true)
+                .setSupportsTeamDrives(true)
+                .setFields("nextPageToken, files(id, name, mimeType, size, md5Checksum)")
+                .execute()
+                .getFiles()
+                .stream()
+                .map(file -> new FileData(file.getId(), file.getName(), file.getMimeType(), file.getMd5Checksum()))
+                .collect(Collectors.toList());
     }
 }
