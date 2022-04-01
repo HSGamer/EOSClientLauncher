@@ -1,4 +1,4 @@
-package me.hsgamer.eosclientdownloader;
+package me.hsgamer.eosclientdownloader.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,12 +8,14 @@ import java.nio.file.StandardCopyOption;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import static me.hsgamer.eosclientdownloader.utils.LoggerUtils.LOGGER;
+
 public class ZipUtils {
     private ZipUtils() {
         // EMPTY
     }
 
-    protected static void unzip(File zipFile, File destination) throws IOException {
+    public static void unzip(File zipFile, File destination) throws IOException {
         try (FileInputStream fis = new FileInputStream(zipFile); ZipInputStream zis = new ZipInputStream(fis)) {
             ZipEntry zipEntry = zis.getNextEntry();
             while (zipEntry != null) {
@@ -29,7 +31,7 @@ public class ZipUtils {
                     }
                     Files.copy(zis, newFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 }
-                EOSClientDownloader.LOGGER.info("Uncompressed to '" + newFile.getCanonicalPath() + "'");
+                LOGGER.info("Uncompressed to '" + newFile.getCanonicalPath() + "'");
                 zipEntry = zis.getNextEntry();
             }
             zis.closeEntry();

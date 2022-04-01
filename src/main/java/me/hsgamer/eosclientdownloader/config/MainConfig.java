@@ -1,13 +1,12 @@
-package me.hsgamer.eosclientdownloader;
+package me.hsgamer.eosclientdownloader.config;
 
-import me.hsgamer.hscore.config.CommentablePath;
-import me.hsgamer.hscore.config.ConfigPath;
 import me.hsgamer.hscore.config.PathableConfig;
-import me.hsgamer.hscore.config.path.BooleanConfigPath;
-import me.hsgamer.hscore.config.path.StringConfigPath;
+import me.hsgamer.hscore.config.path.CommentablePath;
+import me.hsgamer.hscore.config.path.ConfigPath;
+import me.hsgamer.hscore.config.path.impl.BooleanConfigPath;
+import me.hsgamer.hscore.config.path.impl.StringConfigPath;
 import me.hsgamer.hscore.config.simpleconfiguration.SimpleConfig;
 import org.simpleyaml.configuration.file.YamlFile;
-import org.simpleyaml.exceptions.InvalidConfigurationException;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,18 +20,6 @@ public class MainConfig extends PathableConfig {
     public static final ConfigPath<String> CLIENT_SECRET = new CommentablePath<>(
             new StringConfigPath("client.secret", ""),
             "The client's secret key"
-    );
-    public static final ConfigPath<String> FILE_NAME = new CommentablePath<>(
-            new StringConfigPath("file.name", "EOS-Client.zip"),
-            "The file's name"
-    );
-    public static final ConfigPath<String> FILE_DRIVE_ID = new CommentablePath<>(
-            new StringConfigPath("file.drive-id", "1fvbPW7nrQ7jGaXLzfAC11FMzZ6zrGRAA"),
-            "The file's drive ID"
-    );
-    public static final ConfigPath<String> FILE_UNCOMPRESSED_PATH = new CommentablePath<>(
-            new StringConfigPath("file.uncompressed-path", "Uncompressed"),
-            "The uncompressed folder"
     );
     public static final ConfigPath<Boolean> FILE_DELETE_AFTER_UNCOMPRESSED = new CommentablePath<>(
             new BooleanConfigPath("file.delete-after-uncompressed", true),
@@ -48,7 +35,7 @@ public class MainConfig extends PathableConfig {
             yamlFile.setConfigurationFile(file);
             try {
                 yamlFile.loadWithComments();
-            } catch (InvalidConfigurationException | IOException e) {
+            } catch (IOException e) {
                 LOGGER.log(Level.WARNING, e.getMessage(), e);
             }
         }));

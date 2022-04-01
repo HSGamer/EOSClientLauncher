@@ -1,6 +1,11 @@
 package me.hsgamer.eosclientdownloader;
 
 import com.google.common.io.ByteStreams;
+import me.hsgamer.eosclientdownloader.config.MainConfig;
+import me.hsgamer.eosclientdownloader.data.FileData;
+import me.hsgamer.eosclientdownloader.utils.DriveUtils;
+import me.hsgamer.eosclientdownloader.utils.FileDataUtils;
+import me.hsgamer.eosclientdownloader.utils.ZipUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -10,32 +15,24 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.GeneralSecurityException;
 import java.util.Comparator;
-import java.util.logging.*;
+import java.util.logging.Level;
 import java.util.stream.Stream;
 
-public class EOSClientDownloader {
-    static final Logger LOGGER = Logger.getLogger("Downloader");
+import static me.hsgamer.eosclientdownloader.utils.LoggerUtils.LOGGER;
 
+public class EOSClientDownloader {
     private static final MainConfig MAIN_CONFIG = new MainConfig();
 
     static {
         MAIN_CONFIG.setup();
-        ConsoleHandler handler = new ConsoleHandler();
-        handler.setLevel(Level.INFO);
-        handler.setFormatter(new Formatter() {
-            @Override
-            public String format(LogRecord logRecord) {
-                return "[" + logRecord.getLevel() + "] " + logRecord.getMessage() + "\n";
-            }
-        });
-        LOGGER.addHandler(handler);
-        LOGGER.setUseParentHandlers(false);
     }
 
     public static void main(String... args) {
-        String filename = MainConfig.FILE_NAME.getValue();
-        String driveId = MainConfig.FILE_DRIVE_ID.getValue();
-        String uncompressedPath = MainConfig.FILE_UNCOMPRESSED_PATH.getValue();
+        FileData fileData = FileDataUtils.getAvailableData().join().get(0);
+
+        String filename = "EOSClient.zip";
+        String driveId = fileData.getId();
+        String uncompressedPath = "Uncompressed";
 
         boolean deleteExistedFiles = MainConfig.FILE_DELETE_EXISTED_UNCOMPRESSED.getValue();
         boolean deleteAfterUncompressed = MainConfig.FILE_DELETE_AFTER_UNCOMPRESSED.getValue();

@@ -1,4 +1,4 @@
-package me.hsgamer.eosclientdownloader;
+package me.hsgamer.eosclientdownloader.utils;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
@@ -11,6 +11,7 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
+import me.hsgamer.eosclientdownloader.config.MainConfig;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,7 +57,7 @@ public class DriveUtils {
         return service;
     }
 
-    protected static InputStream getFileAsInputStream(String driveId) throws IOException, GeneralSecurityException {
+    public static InputStream getFileAsInputStream(String driveId) throws IOException, GeneralSecurityException {
         return getService().files().get(driveId).setSupportsTeamDrives(true).executeMediaAsInputStream();
     }
 }
