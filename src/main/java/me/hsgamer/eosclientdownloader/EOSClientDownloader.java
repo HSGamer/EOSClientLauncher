@@ -49,7 +49,17 @@ public class EOSClientDownloader {
             LOGGER.info("Downloading file...");
             InputStream downloadStream = DriveUtils.getFileAsInputStream(fileData.getId());
             FileOutputStream fileOutputStream = new FileOutputStream(downloadFile);
-            ByteStreams.copy(downloadStream, fileOutputStream);
+            float progress = 0;
+            long size = fileData.getSize();
+            byte[] buffer = new byte[1024];
+            int read;
+            System.out.print("Downloading: 0%");
+            while ((read = downloadStream.read(buffer)) != -1) {
+                fileOutputStream.write(buffer, 0, read);
+                progress += read;
+                System.out.print("\rDownloading: " + (progress / size * 100) + "%");
+            }
+            System.out.println();
             LOGGER.info("Downloaded to '" + downloadFile.getCanonicalPath() + "'");
 
             File uncompressedFolder = new File(uncompressedPath);
