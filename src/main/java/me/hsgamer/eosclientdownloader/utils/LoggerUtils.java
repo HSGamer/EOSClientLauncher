@@ -17,4 +17,8 @@ public final class LoggerUtils {
         LOGGER.addHandler(handler);
         LOGGER.setUseParentHandlers(false);
     }
+
+    private LoggerUtils() {
+        // EMPTY
+    }
 }

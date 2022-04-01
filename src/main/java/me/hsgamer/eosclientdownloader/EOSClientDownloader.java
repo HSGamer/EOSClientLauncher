@@ -28,10 +28,7 @@ public class EOSClientDownloader {
     }
 
     public static void main(String... args) {
-        FileData fileData = FileDataUtils.getAvailableData().join().get(0);
-
         String filename = "EOSClient.zip";
-        String driveId = fileData.getId();
         String uncompressedPath = "Uncompressed";
 
         boolean deleteExistedFiles = MainConfig.FILE_DELETE_EXISTED_UNCOMPRESSED.getValue();
@@ -42,9 +39,12 @@ public class EOSClientDownloader {
             if (!downloadFile.exists() && downloadFile.createNewFile()) {
                 LOGGER.info("Created '" + downloadFile.getCanonicalPath() + "'");
             }
+            FileDataUtils.runFuture();
+            DriveUtils.initService();
 
+            FileData fileData = FileDataUtils.getAvailableData().join().get(0);
+            InputStream downloadStream = DriveUtils.getFileAsInputStream(fileData.getId());
             FileOutputStream fileOutputStream = new FileOutputStream(downloadFile);
-            InputStream downloadStream = DriveUtils.getFileAsInputStream(driveId);
             ByteStreams.copy(downloadStream, fileOutputStream);
             LOGGER.info("Downloaded to '" + downloadFile.getCanonicalPath() + "'");
 

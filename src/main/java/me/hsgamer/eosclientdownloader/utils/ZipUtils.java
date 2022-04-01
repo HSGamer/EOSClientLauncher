@@ -10,7 +10,7 @@ import java.util.zip.ZipInputStream;
 
 import static me.hsgamer.eosclientdownloader.utils.LoggerUtils.LOGGER;
 
-public class ZipUtils {
+public final class ZipUtils {
     private ZipUtils() {
         // EMPTY
     }

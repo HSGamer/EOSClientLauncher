@@ -20,7 +20,7 @@ import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.List;
 
-public class DriveUtils {
+public final class DriveUtils {
     private static final String APPLICATION_NAME = "FPT-EOSClient Downloader";
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
@@ -47,17 +47,17 @@ public class DriveUtils {
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 
-    private static Drive getService() throws IOException, GeneralSecurityException {
+    public static void initService() throws IOException, GeneralSecurityException {
         if (service == null) {
             final NetHttpTransport netHttpTransport = GoogleNetHttpTransport.newTrustedTransport();
             service = new Drive.Builder(netHttpTransport, JSON_FACTORY, getCredentials(netHttpTransport))
                     .setApplicationName(APPLICATION_NAME)
                     .build();
         }
-        return service;
     }
 
     public static InputStream getFileAsInputStream(String driveId) throws IOException, GeneralSecurityException {
-        return getService().files().get(driveId).setSupportsTeamDrives(true).executeMediaAsInputStream();
+        initService();
+        return service.files().get(driveId).setSupportsTeamDrives(true).executeMediaAsInputStream();
     }
 }
