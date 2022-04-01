@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -15,7 +18,8 @@ public final class ZipUtils {
         // EMPTY
     }
 
-    public static void unzip(File zipFile, File destination) throws IOException {
+    public static List<Path> unzip(File zipFile, File destination) throws IOException {
+        List<Path> createdFiles = new ArrayList<>();
         try (FileInputStream fis = new FileInputStream(zipFile); ZipInputStream zis = new ZipInputStream(fis)) {
             ZipEntry zipEntry = zis.getNextEntry();
             while (zipEntry != null) {
@@ -30,11 +34,13 @@ public final class ZipUtils {
                         throw new IOException("Failed to create directory " + parent);
                     }
                     Files.copy(zis, newFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    createdFiles.add(newFile.toPath());
                 }
                 LOGGER.info("Uncompressed to '" + newFile.getCanonicalPath() + "'");
                 zipEntry = zis.getNextEntry();
             }
             zis.closeEntry();
         }
+        return createdFiles;
     }
 }

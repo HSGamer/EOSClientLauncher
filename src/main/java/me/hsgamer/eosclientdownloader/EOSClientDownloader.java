@@ -52,7 +52,7 @@ public class EOSClientDownloader {
             ByteStreams.copy(downloadStream, fileOutputStream);
             LOGGER.info("Downloaded to '" + downloadFile.getCanonicalPath() + "'");
 
-            File uncompressedFolder = new File(".", uncompressedPath);
+            File uncompressedFolder = new File(uncompressedPath);
             if (deleteExistedFiles && uncompressedFolder.exists()) {
                 try (Stream<Path> stream = Files.walk(uncompressedFolder.toPath())) {
                     stream.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
@@ -60,8 +60,14 @@ public class EOSClientDownloader {
                 LOGGER.info("Deleted existed folder");
             }
 
-            ZipUtils.unzip(downloadFile, uncompressedFolder);
+            List<Path> files = ZipUtils.unzip(downloadFile, uncompressedFolder);
             fileOutputStream.close();
+
+            Path eosClient = files.stream()
+                    .filter(path -> path.endsWith("EOSClient.exe"))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalStateException("Can't find EOSClient folder"));
+            System.out.println("EOSClient path: " + eosClient.toAbsolutePath());
         } catch (GeneralSecurityException | IOException e) {
             LOGGER.log(Level.WARNING, e.getMessage(), e);
         }
