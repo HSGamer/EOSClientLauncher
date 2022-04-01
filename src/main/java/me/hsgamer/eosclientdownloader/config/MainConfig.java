@@ -21,8 +21,8 @@ public class MainConfig extends PathableConfig {
             new StringConfigPath("client.secret", ""),
             "The client's secret key"
     );
-    public static final ConfigPath<String> FOLDER_ID = new CommentablePath<>(
-            new StringConfigPath("folder-id", "10sGYKJCvNNra6WAnAsILFLd2qBbd9043"),
+    public static final ConfigPath<String> CLIENT_FOLDER_ID = new CommentablePath<>(
+            new StringConfigPath("client.folder-id", "10sGYKJCvNNra6WAnAsILFLd2qBbd9043"),
             "The folder's ID"
     );
     public static final ConfigPath<Boolean> FILE_DELETE_EXISTED_UNCOMPRESSED = new CommentablePath<>(

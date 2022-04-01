@@ -68,7 +68,7 @@ public class EOSClientDownloader {
     }
 
     private static FileData askAndGet() throws GeneralSecurityException, IOException {
-        List<FileData> list = DriveUtils.getFiles(MainConfig.FOLDER_ID.getValue());
+        List<FileData> list = DriveUtils.getFiles(MainConfig.CLIENT_FOLDER_ID.getValue());
         Scanner scanner = new Scanner(System.in);
         int index = 0;
         for (int i = 0; i < list.size(); i++) {
