@@ -69,11 +69,11 @@ public final class DriveUtils {
                 .setQ("'" + folderId + "' in parents and trashed = false and name contains '.zip'")
                 .setIncludeTeamDriveItems(true)
                 .setSupportsTeamDrives(true)
-                .setFields("nextPageToken, files(id, name, mimeType, size, md5Checksum)")
+                .setFields("files(id, name, mimeType, size, md5Checksum)")
                 .execute()
                 .getFiles()
                 .stream()
-                .map(file -> new FileData(file.getId(), file.getName(), file.getMimeType(), file.getMd5Checksum()))
+                .map(file -> new FileData(file.getId(), file.getName(), file.getMimeType(), file.getMd5Checksum(), file.getSize()))
                 .collect(Collectors.toList());
     }
 }
