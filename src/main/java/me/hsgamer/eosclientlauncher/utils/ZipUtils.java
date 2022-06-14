@@ -1,4 +1,4 @@
-package me.hsgamer.eosclientdownloader.utils;
+package me.hsgamer.eosclientlauncher.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import static me.hsgamer.eosclientdownloader.utils.LoggerUtils.LOGGER;
+import static me.hsgamer.eosclientlauncher.utils.LoggerUtils.LOGGER;
 
 public final class ZipUtils {
     private ZipUtils() {

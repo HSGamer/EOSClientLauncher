@@ -1,4 +1,4 @@
-package me.hsgamer.eosclientdownloader.utils;
+package me.hsgamer.eosclientlauncher.utils;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
@@ -11,8 +11,8 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
-import me.hsgamer.eosclientdownloader.config.MainConfig;
-import me.hsgamer.eosclientdownloader.data.FileData;
+import me.hsgamer.eosclientlauncher.config.MainConfig;
+import me.hsgamer.eosclientlauncher.data.FileData;
 
 import java.io.File;
 import java.io.IOException;

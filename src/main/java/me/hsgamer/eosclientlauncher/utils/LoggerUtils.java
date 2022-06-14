@@ -1,4 +1,4 @@
-package me.hsgamer.eosclientdownloader.utils;
+package me.hsgamer.eosclientlauncher.utils;
 
 import java.util.logging.*;
 

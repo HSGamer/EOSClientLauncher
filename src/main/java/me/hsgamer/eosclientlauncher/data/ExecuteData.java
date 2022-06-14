@@ -1,4 +1,4 @@
-package me.hsgamer.eosclientdownloader.data;
+package me.hsgamer.eosclientlauncher.data;
 
 import java.nio.file.Path;
 import java.util.function.Predicate;

@@ -1,11 +1,11 @@
-package me.hsgamer.eosclientdownloader;
+package me.hsgamer.eosclientlauncher;
 
-import me.hsgamer.eosclientdownloader.config.MainConfig;
-import me.hsgamer.eosclientdownloader.data.ExecuteData;
-import me.hsgamer.eosclientdownloader.data.FileData;
-import me.hsgamer.eosclientdownloader.utils.DriveUtils;
-import me.hsgamer.eosclientdownloader.utils.Utils;
-import me.hsgamer.eosclientdownloader.utils.ZipUtils;
+import me.hsgamer.eosclientlauncher.config.MainConfig;
+import me.hsgamer.eosclientlauncher.data.ExecuteData;
+import me.hsgamer.eosclientlauncher.data.FileData;
+import me.hsgamer.eosclientlauncher.utils.DriveUtils;
+import me.hsgamer.eosclientlauncher.utils.Utils;
+import me.hsgamer.eosclientlauncher.utils.ZipUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -20,9 +20,9 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 
-import static me.hsgamer.eosclientdownloader.utils.LoggerUtils.LOGGER;
+import static me.hsgamer.eosclientlauncher.utils.LoggerUtils.LOGGER;
 
-public class EOSClientDownloader {
+public class EOSClientLauncher {
     private static final MainConfig MAIN_CONFIG = new MainConfig();
 
     static {
@@ -44,27 +44,28 @@ public class EOSClientDownloader {
             String currentMd5 = Utils.getFileChecksum(downloadFile);
             if (currentMd5.equalsIgnoreCase(fileData.getMd5())) {
                 LOGGER.info("The file is already downloaded");
-                return;
-            }
-            LOGGER.info("Downloading file...");
-            InputStream downloadStream = DriveUtils.getFileAsInputStream(fileData.getId());
-            FileOutputStream fileOutputStream = new FileOutputStream(downloadFile);
-            float progress = 0;
-            long size = fileData.getSize();
-            byte[] buffer = new byte[1024];
-            int read;
-            LOGGER.info("Downloading: 0%");
-            int times = 0;
-            while ((read = downloadStream.read(buffer)) != -1) {
-                fileOutputStream.write(buffer, 0, read);
-                progress += read;
-                if (progress / size >= times * 0.1) {
-                    float finalProgress = progress;
-                    LOGGER.info(() -> "Downloading: " + (int) (finalProgress / size * 100) + "%");
-                    times++;
+            } else {
+                LOGGER.info("Downloading file...");
+                InputStream downloadStream = DriveUtils.getFileAsInputStream(fileData.getId());
+                FileOutputStream fileOutputStream = new FileOutputStream(downloadFile);
+                float progress = 0;
+                long size = fileData.getSize();
+                byte[] buffer = new byte[1024];
+                int read;
+                LOGGER.info("Downloading: 0%");
+                int times = 0;
+                while ((read = downloadStream.read(buffer)) != -1) {
+                    fileOutputStream.write(buffer, 0, read);
+                    progress += read;
+                    if (progress / size >= times * 0.1) {
+                        float finalProgress = progress;
+                        LOGGER.info(() -> "Downloading: " + (int) (finalProgress / size * 100) + "%");
+                        times++;
+                    }
                 }
+                fileOutputStream.close();
+                LOGGER.info("Downloaded to '" + downloadFile.getCanonicalPath() + "'");
             }
-            LOGGER.info("Downloaded to '" + downloadFile.getCanonicalPath() + "'");
 
             File uncompressedFolder = new File(uncompressedPath);
             if (deleteExistedFiles && uncompressedFolder.exists()) {
@@ -73,17 +74,17 @@ public class EOSClientDownloader {
                 }
                 LOGGER.info("Deleted existed folder");
             }
-
             List<Path> files = ZipUtils.unzip(downloadFile, uncompressedFolder);
-            fileOutputStream.close();
 
             Path clientPath = files.stream()
                     .filter(executeData.executeFileCheck)
                     .findFirst()
                     .orElseThrow(() -> new IllegalStateException("Can't find Client folder"));
-            System.out.println("Path: " + clientPath.toAbsolutePath());
+            Dispatcher.dispatch(clientPath);
         } catch (GeneralSecurityException | IOException e) {
             LOGGER.log(Level.WARNING, e.getMessage(), e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 

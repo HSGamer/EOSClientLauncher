@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>me.HSGamer</groupId>
-    <artifactId>EOSClientDownloader</artifactId>
-    <version>1.1</version>
+    <groupId>me.hsgamer</groupId>
+    <artifactId>eos-client-launcher</artifactId>
+    <version>2.0</version>
 
     <properties>
         <java.version>1.8</java.version>
@@ -35,7 +35,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>me.hsgamer.eosclientdownloader.EOSClientDownloader</mainClass>
+                            <mainClass>me.hsgamer.eosclientlauncher.EOSClientLauncher</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

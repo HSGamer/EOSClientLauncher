@@ -16,5 +16,3 @@
 4. On the first run, the program will open a page asking you to fill your account. You should enter the account that has access to the Shared Drive of FPT University
 5. Once you filled, a token will be saved to the program and the downloading process will be started.
 6. Now, on everytime you run the program, the file will be downloaded and extracted automatically
-## Pre-made Startup Scripts
-* Windows: [Batch](./scripts/windows.cmd)
