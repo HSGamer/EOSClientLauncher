@@ -1,7 +1,7 @@
 package me.hsgamer.eosclientdownloader;
 
-import com.google.common.io.ByteStreams;
 import me.hsgamer.eosclientdownloader.config.MainConfig;
+import me.hsgamer.eosclientdownloader.data.ExecuteData;
 import me.hsgamer.eosclientdownloader.data.FileData;
 import me.hsgamer.eosclientdownloader.utils.DriveUtils;
 import me.hsgamer.eosclientdownloader.utils.Utils;
@@ -30,17 +30,17 @@ public class EOSClientDownloader {
     }
 
     public static void main(String... args) {
-        String filename = "EOSClient.zip";
+        ExecuteData executeData = MainConfig.FILE_MODE.getValue();
         String uncompressedPath = "Uncompressed";
 
         boolean deleteExistedFiles = MainConfig.FILE_DELETE_EXISTED_UNCOMPRESSED.getValue();
 
         try {
-            File downloadFile = new File(filename);
+            File downloadFile = new File(executeData.fileName);
             if (!downloadFile.exists() && downloadFile.createNewFile()) {
                 LOGGER.info("Created '" + downloadFile.getCanonicalPath() + "'");
             }
-            FileData fileData = askAndGet();
+            FileData fileData = askAndGet(executeData.clientId);
             String currentMd5 = Utils.getFileChecksum(downloadFile);
             if (currentMd5.equalsIgnoreCase(fileData.getMd5())) {
                 LOGGER.info("The file is already downloaded");
@@ -73,18 +73,18 @@ public class EOSClientDownloader {
             List<Path> files = ZipUtils.unzip(downloadFile, uncompressedFolder);
             fileOutputStream.close();
 
-            Path eosClient = files.stream()
-                    .filter(path -> path.endsWith("EOSClient.exe"))
+            Path clientPath = files.stream()
+                    .filter(executeData.executeFileCheck)
                     .findFirst()
-                    .orElseThrow(() -> new IllegalStateException("Can't find EOSClient folder"));
-            System.out.println("EOSClient path: " + eosClient.toAbsolutePath());
+                    .orElseThrow(() -> new IllegalStateException("Can't find Client folder"));
+            System.out.println("Path: " + clientPath.toAbsolutePath());
         } catch (GeneralSecurityException | IOException e) {
             LOGGER.log(Level.WARNING, e.getMessage(), e);
         }
     }
 
-    private static FileData askAndGet() throws GeneralSecurityException, IOException {
-        List<FileData> list = DriveUtils.getFiles(MainConfig.CLIENT_FOLDER_ID.getValue());
+    private static FileData askAndGet(String clientId) throws GeneralSecurityException, IOException {
+        List<FileData> list = DriveUtils.getFiles(clientId);
         Scanner scanner = new Scanner(System.in);
         int index = 0;
         for (int i = 0; i < list.size(); i++) {
