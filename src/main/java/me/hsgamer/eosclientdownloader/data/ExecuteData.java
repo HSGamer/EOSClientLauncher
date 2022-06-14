@@ -11,7 +11,7 @@ public enum ExecuteData {
     ),
     PEA_CLIENT(
             "PEAClient.zip",
-            "1rx0t_fSFqc1IJ4NSIQqjVjWmd3t5r1sC",
+            "1Yxp0nua82PHc0UShAss4mxDpRngP2Bbt",
             "PEALogin.exe"
     );
 
