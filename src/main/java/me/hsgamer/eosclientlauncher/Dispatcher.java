@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
-public class Dispatcher {
+public final class Dispatcher {
     public static void dispatch(Path path) throws IOException, InterruptedException {
         Path parent = path.getParent();
         List<String> scriptList = Arrays.asList(
