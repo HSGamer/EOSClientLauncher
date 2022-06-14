@@ -30,7 +30,7 @@ public class EOSClientDownloader {
     }
 
     public static void main(String... args) {
-        ExecuteData executeData = MainConfig.FILE_MODE.getValue();
+        ExecuteData executeData = askAndGetExecute();
         String uncompressedPath = "Uncompressed";
 
         boolean deleteExistedFiles = MainConfig.FILE_DELETE_EXISTED_UNCOMPRESSED.getValue();
@@ -53,13 +53,17 @@ public class EOSClientDownloader {
             long size = fileData.getSize();
             byte[] buffer = new byte[1024];
             int read;
-            System.out.print("Downloading: 0%");
+            LOGGER.info("Downloading: 0%");
+            int times = 0;
             while ((read = downloadStream.read(buffer)) != -1) {
                 fileOutputStream.write(buffer, 0, read);
                 progress += read;
-                System.out.print("\rDownloading: " + (progress / size * 100) + "%");
+                if (progress / size >= times * 0.1) {
+                    float finalProgress = progress;
+                    LOGGER.info(() -> "Downloading: " + (int) (finalProgress / size * 100) + "%");
+                    times++;
+                }
             }
-            System.out.println();
             LOGGER.info("Downloaded to '" + downloadFile.getCanonicalPath() + "'");
 
             File uncompressedFolder = new File(uncompressedPath);
@@ -107,5 +111,25 @@ public class EOSClientDownloader {
             }
         } while (index < 0 || index >= list.size());
         return list.get(index);
+    }
+
+    private static ExecuteData askAndGetExecute() {
+        ExecuteData[] values = ExecuteData.values();
+        for (int i = 0; i < values.length; i++) {
+            ExecuteData executeData = values[i];
+            int finalI = i;
+            LOGGER.info(() -> finalI + ": " + executeData.name());
+        }
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Please enter the number of the execute data you want to use: ");
+        int index = 0;
+        do {
+            try {
+                index = Integer.parseInt(scanner.nextLine());
+            } catch (Exception ignored) {
+                LOGGER.info("Will choose the first execute data");
+            }
+        } while (index < 0 || index >= values.length);
+        return values[index];
     }
 }
