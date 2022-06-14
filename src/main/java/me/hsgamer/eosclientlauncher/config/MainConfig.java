@@ -25,6 +25,10 @@ public class MainConfig extends PathableConfig {
             new BooleanConfigPath("file.delete-existed-files", false),
             "Should the existed files be deleted before uncompressing ?"
     );
+    public static final ConfigPath<Boolean> AUTO_CONNECT_WIFI = new CommentablePath<>(
+            new BooleanConfigPath("auto-connect-wifi", false),
+            "Should the launcher automatically connect to the wifi network ?"
+    );
 
     public MainConfig() {
         super(new SimpleConfig<>(new File(".", "config.yml"), new YamlFile(), (file, yamlFile) -> {

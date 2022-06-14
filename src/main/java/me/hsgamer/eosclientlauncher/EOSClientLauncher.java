@@ -80,6 +80,9 @@ public class EOSClientLauncher {
                     .filter(executeData.executeFileCheck)
                     .findFirst()
                     .orElseThrow(() -> new IllegalStateException("Can't find Client folder"));
+            if (MainConfig.AUTO_CONNECT_WIFI.getValue()) {
+                WifiConnector.connect();
+            }
             Dispatcher.dispatch(clientPath);
         } catch (GeneralSecurityException | IOException e) {
             LOGGER.log(Level.WARNING, e.getMessage(), e);
