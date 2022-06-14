@@ -85,6 +85,12 @@ public class EOSClientDownloader {
 
     private static FileData askAndGet(String clientId) throws GeneralSecurityException, IOException {
         List<FileData> list = DriveUtils.getFiles(clientId);
+        if (list.isEmpty()) {
+            throw new IllegalStateException("Can't find any file");
+        }
+        if (list.size() == 1) {
+            return list.get(0);
+        }
         Scanner scanner = new Scanner(System.in);
         int index = 0;
         for (int i = 0; i < list.size(); i++) {
