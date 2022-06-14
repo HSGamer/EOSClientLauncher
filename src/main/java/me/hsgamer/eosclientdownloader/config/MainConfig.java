@@ -28,7 +28,7 @@ public class MainConfig extends PathableConfig {
             "The client's secret key"
     );
     public static final ConfigPath<ExecuteData> FILE_MODE = new CommentablePath<>(
-            new AdvancedConfigPath<String, ExecuteData>("file-mode", ExecuteData.EOS_CLIENT) {
+            new AdvancedConfigPath<String, ExecuteData>("file.mode", ExecuteData.EOS_CLIENT) {
                 @Override
                 public @Nullable String getFromConfig(@NotNull Config config) {
                     return Objects.toString(config.get(getPath()), null);
