@@ -44,17 +44,17 @@ public class WindowsExecutor implements Executor {
     }
 
     private void connectWifi() throws IOException, InterruptedException {
-        String PROFILE_NAME = "FU-Exam";
-        File wifiProfile = new File(PROFILE_NAME);
+        String profileName = "FU-Exam";
+        File wifiProfile = new File(profileName);
         if (!wifiProfile.exists()) {
             wifiProfile.createNewFile();
-            String PROFILE_FILE_NAME = "Wi-Fi-FU-Exam.xml";
-            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(PROFILE_FILE_NAME);
+            String profileFileName = "Wi-Fi-FU-Exam.xml";
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(profileFileName);
             Files.copy(inputStream, wifiProfile.toPath());
             Process process = Runtime.getRuntime().exec("netsh wlan add profile filename=\"" + wifiProfile.getAbsolutePath() + "\"");
             process.waitFor();
         }
-        Process process = Runtime.getRuntime().exec("netsh wlan connect name=\"" + PROFILE_NAME + "\"");
+        Process process = Runtime.getRuntime().exec("netsh wlan connect name=\"" + profileName + "\"");
         process.waitFor();
     }
 }
