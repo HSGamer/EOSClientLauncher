@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -50,7 +51,8 @@ public class WindowsExecutor implements Executor {
         if (!wifiProfile.exists()) {
             wifiProfile.createNewFile();
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream(profileFileName);
-            Files.copy(inputStream, wifiProfile.toPath());
+            assert inputStream != null;
+            Files.copy(inputStream, wifiProfile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             Process process = Runtime.getRuntime().exec("netsh wlan add profile filename=\"" + wifiProfile.getAbsolutePath() + "\"");
             process.waitFor();
         }

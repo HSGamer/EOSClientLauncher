@@ -11,7 +11,23 @@ public final class LoggerUtils {
         handler.setFormatter(new Formatter() {
             @Override
             public String format(LogRecord logRecord) {
-                return "[" + logRecord.getLevel() + "] " + logRecord.getMessage() + "\n";
+                StringBuilder builder = new StringBuilder();
+                builder.append("[").append(logRecord.getLevel()).append("] ").append(logRecord.getMessage());
+                builder.append("\n");
+                Throwable throwable = logRecord.getThrown();
+                if (throwable != null) {
+                    builder.append(throwable.getClass().getName()).append(": ").append(throwable.getMessage()).append("\n");
+                    for (StackTraceElement element : throwable.getStackTrace()) {
+                        builder.append("  at ")
+                                .append(element.getClassName())
+                                .append(" ")
+                                .append(element.getFileName())
+                                .append(":")
+                                .append(element.getLineNumber())
+                                .append("\n");
+                    }
+                }
+                return builder.toString();
             }
         });
         LOGGER.addHandler(handler);
