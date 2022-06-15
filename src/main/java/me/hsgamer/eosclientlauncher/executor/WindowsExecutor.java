@@ -45,10 +45,10 @@ public class WindowsExecutor implements Executor {
 
     private void connectWifi() throws IOException, InterruptedException {
         String profileName = "FU-Exam";
-        File wifiProfile = new File(profileName);
+        String profileFileName = "Wi-Fi-FU-Exam.xml";
+        File wifiProfile = new File(profileFileName);
         if (!wifiProfile.exists()) {
             wifiProfile.createNewFile();
-            String profileFileName = "Wi-Fi-FU-Exam.xml";
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream(profileFileName);
             Files.copy(inputStream, wifiProfile.toPath());
             Process process = Runtime.getRuntime().exec("netsh wlan add profile filename=\"" + wifiProfile.getAbsolutePath() + "\"");
