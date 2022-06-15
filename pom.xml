@@ -81,12 +81,12 @@
         <dependency>
             <groupId>com.google.oauth-client</groupId>
             <artifactId>google-oauth-client-jetty</artifactId>
-            <version>1.33.1</version>
+            <version>1.34.1</version>
         </dependency>
         <dependency>
             <groupId>com.google.apis</groupId>
             <artifactId>google-api-services-drive</artifactId>
-            <version>v3-rev20220214-1.32.1</version>
+            <version>v3-rev20220508-1.32.1</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -119,6 +119,12 @@
             <artifactId>annotations</artifactId>
             <version>23.0.0</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.12.0</version>
         </dependency>
     </dependencies>
 </project>

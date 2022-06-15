@@ -3,6 +3,8 @@ package me.hsgamer.eosclientlauncher;
 import me.hsgamer.eosclientlauncher.config.MainConfig;
 import me.hsgamer.eosclientlauncher.data.ExecuteData;
 import me.hsgamer.eosclientlauncher.data.FileData;
+import me.hsgamer.eosclientlauncher.executor.Executor;
+import me.hsgamer.eosclientlauncher.executor.WindowsExecutor;
 import me.hsgamer.eosclientlauncher.utils.DriveUtils;
 import me.hsgamer.eosclientlauncher.utils.Utils;
 import me.hsgamer.eosclientlauncher.utils.ZipUtils;
@@ -14,9 +16,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.GeneralSecurityException;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 
@@ -24,9 +24,11 @@ import static me.hsgamer.eosclientlauncher.utils.LoggerUtils.LOGGER;
 
 public class EOSClientLauncher {
     private static final MainConfig MAIN_CONFIG = new MainConfig();
+    private static final List<Executor> EXECUTORS = new ArrayList<>();
 
     static {
         MAIN_CONFIG.setup();
+        EXECUTORS.add(new WindowsExecutor());
     }
 
     public static void main(String... args) {
@@ -80,10 +82,16 @@ public class EOSClientLauncher {
                     .filter(executeData.executeFileCheck)
                     .findFirst()
                     .orElseThrow(() -> new IllegalStateException("Can't find Client folder"));
-            if (MainConfig.AUTO_CONNECT_WIFI.getValue()) {
-                WifiConnector.connect();
+            if (MainConfig.EXECUTE_FILE_AFTER_DOWNLOAD.getValue()) {
+                Optional<Executor> executor = EXECUTORS.stream()
+                        .filter(Executor::canExecute)
+                        .findFirst();
+                if (executor.isPresent()) {
+                    executor.get().execute(clientPath, Boolean.TRUE.equals(MainConfig.AUTO_CONNECT_WIFI.getValue())).join();
+                } else {
+                    LOGGER.warning("Can't find any executor");
+                }
             }
-            Dispatcher.dispatch(clientPath);
         } catch (GeneralSecurityException | IOException e) {
             LOGGER.log(Level.WARNING, e.getMessage(), e);
         } catch (InterruptedException e) {

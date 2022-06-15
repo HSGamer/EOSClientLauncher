@@ -29,6 +29,10 @@ public class MainConfig extends PathableConfig {
             new BooleanConfigPath("auto-connect-wifi", false),
             "Should the launcher automatically connect to the wifi network ?"
     );
+    public static final ConfigPath<Boolean> EXECUTE_FILE_AFTER_DOWNLOAD = new CommentablePath<>(
+            new BooleanConfigPath("execute-file-after-download", true),
+            "Should the launcher execute the file after downloading ?"
+    );
 
     public MainConfig() {
         super(new SimpleConfig<>(new File(".", "config.yml"), new YamlFile(), (file, yamlFile) -> {
