@@ -45,11 +45,10 @@ public class EOSClientCLI {
     }
 
     public static void main(String... args) {
-        ExecuteData executeData = askAndGetExecute();
         Launcher.builder()
                 .clientId(MainConfig.CLIENT_ID.getValue())
                 .clientSecret(MainConfig.CLIENT_SECRET.getValue())
-                .executeData(executeData)
+                .executeData(askAndGetExecute())
                 .connectWifi(MainConfig.AUTO_CONNECT_WIFI.getValue())
                 .deleteExistedFiles(MainConfig.FILE_DELETE_EXISTED_UNCOMPRESSED.getValue())
                 .executeAfterDownload(MainConfig.EXECUTE_FILE_AFTER_DOWNLOAD.getValue())
