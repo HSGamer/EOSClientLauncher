@@ -1,4 +1,6 @@
-package me.hsgamer.eosclientlauncher.utils;
+package me.hsgamer.eosclientlauncher.core.utils;
+
+import lombok.experimental.UtilityClass;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,7 +8,8 @@ import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class Utils {
+@UtilityClass
+public final class Utils {
     public static String toHex(byte[] bytes) {
         StringBuilder builder = new StringBuilder();
         for (byte b : bytes) {

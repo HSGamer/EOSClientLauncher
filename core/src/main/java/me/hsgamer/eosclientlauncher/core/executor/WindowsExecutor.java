@@ -1,4 +1,4 @@
-package me.hsgamer.eosclientlauncher.executor;
+package me.hsgamer.eosclientlauncher.core.executor;
 
 import org.apache.commons.lang3.SystemUtils;
 

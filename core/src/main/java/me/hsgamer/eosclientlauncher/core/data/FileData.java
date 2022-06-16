@@ -1,4 +1,4 @@
-package me.hsgamer.eosclientlauncher.data;
+package me.hsgamer.eosclientlauncher.core.data;
 
 public class FileData {
     private final String id;

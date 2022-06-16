@@ -1,4 +1,4 @@
-package me.hsgamer.eosclientlauncher.utils;
+package me.hsgamer.eosclientlauncher.core.utils;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
@@ -11,8 +11,7 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
-import me.hsgamer.eosclientlauncher.config.MainConfig;
-import me.hsgamer.eosclientlauncher.data.FileData;
+import me.hsgamer.eosclientlauncher.core.data.FileData;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,15 +27,17 @@ public final class DriveUtils {
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
     private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE_READONLY);
 
-    private static Drive service;
+    private Drive service;
 
-    private DriveUtils() {
-        // EMPTY
+    private final String clientId;
+    private final String clientSecret;
+
+    public DriveUtils(String clientId, String clientSecret) {
+        this.clientId = clientId;
+        this.clientSecret = clientSecret;
     }
 
-    private static Credential getCredentials(final NetHttpTransport httpTransport) throws IOException {
-        String clientId = MainConfig.CLIENT_ID.getValue();
-        String clientSecret = MainConfig.CLIENT_SECRET.getValue();
+    private Credential getCredentials(NetHttpTransport httpTransport) throws IOException {
         if (clientId.isEmpty() || clientSecret.isEmpty()) {
             throw new IllegalArgumentException("Client settings are not configured correctly");
         }
@@ -49,7 +50,7 @@ public final class DriveUtils {
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 
-    public static Drive getService() throws IOException, GeneralSecurityException {
+    public Drive getService() throws IOException, GeneralSecurityException {
         if (service == null) {
             final NetHttpTransport netHttpTransport = GoogleNetHttpTransport.newTrustedTransport();
             service = new Drive.Builder(netHttpTransport, JSON_FACTORY, getCredentials(netHttpTransport))
@@ -59,11 +60,11 @@ public final class DriveUtils {
         return service;
     }
 
-    public static InputStream getFileAsInputStream(String fileId) throws IOException, GeneralSecurityException {
+    public InputStream getFileAsInputStream(String fileId) throws IOException, GeneralSecurityException {
         return getService().files().get(fileId).setSupportsTeamDrives(true).executeMediaAsInputStream();
     }
 
-    public static List<FileData> getFiles(String folderId) throws GeneralSecurityException, IOException {
+    public List<FileData> getFiles(String folderId) throws GeneralSecurityException, IOException {
         return getService().files()
                 .list()
                 .setQ("'" + folderId + "' in parents and trashed = false and name contains '.zip'")

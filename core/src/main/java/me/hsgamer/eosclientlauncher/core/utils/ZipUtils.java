@@ -1,4 +1,6 @@
-package me.hsgamer.eosclientlauncher.utils;
+package me.hsgamer.eosclientlauncher.core.utils;
+
+import lombok.experimental.UtilityClass;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,13 +13,8 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import static me.hsgamer.eosclientlauncher.utils.LoggerUtils.LOGGER;
-
+@UtilityClass
 public final class ZipUtils {
-    private ZipUtils() {
-        // EMPTY
-    }
-
     public static List<Path> unzip(File zipFile, File destination) throws IOException {
         List<Path> createdFiles = new ArrayList<>();
         try (FileInputStream fis = new FileInputStream(zipFile); ZipInputStream zis = new ZipInputStream(fis)) {
@@ -36,7 +33,6 @@ public final class ZipUtils {
                     Files.copy(zis, newFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                     createdFiles.add(newFile.toPath());
                 }
-                LOGGER.info("Uncompressed to '" + newFile.getCanonicalPath() + "'");
                 zipEntry = zis.getNextEntry();
             }
             zis.closeEntry();

@@ -1,4 +1,4 @@
-package me.hsgamer.eosclientlauncher.config;
+package me.hsgamer.esoclientdownloader.cli.config;
 
 import me.hsgamer.hscore.config.PathableConfig;
 import me.hsgamer.hscore.config.path.CommentablePath;
