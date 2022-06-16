@@ -14,6 +14,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -27,28 +28,40 @@ import java.util.stream.Stream;
 public class Launcher {
     private String clientId;
     private String clientSecret;
-    private ExecuteData executeData;
-    @Builder.Default private boolean connectWifi = false;
-    @Builder.Default private File uncompressedFolder = new File("Uncompressed");
-    @Builder.Default private boolean deleteExistedFiles = false;
-    @Builder.Default private BiConsumer<Long, Long> progressConsumer = (total, current) -> {
+    @Builder.Default
+    private boolean connectWifi = false;
+    @Builder.Default
+    private File uncompressedFolder = new File("Uncompressed");
+    @Builder.Default
+    private boolean deleteExistedFiles = false;
+    @Builder.Default
+    private BiConsumer<Long, Long> progressConsumer = (total, current) -> {
         // EMPTY
     };
-    @Builder.Default private Consumer<Path> onStartDownload = path -> {
+    @Builder.Default
+    private Consumer<Path> onStartDownload = path -> {
         // EMPTY
     };
-    @Builder.Default private Consumer<Path> onFinishDownload = path -> {
+    @Builder.Default
+    private Consumer<Path> onFinishDownload = path -> {
         // EMPTY
     };
-    @Builder.Default private Consumer<Path> onAlreadyDownload = path -> {
+    @Builder.Default
+    private Consumer<Path> onAlreadyDownload = path -> {
         // EMPTY
     };
-    @Builder.Default private Consumer<Path> onCreateFolder = path -> {
+    @Builder.Default
+    private Consumer<Path> onCreateFolder = path -> {
         // EMPTY
     };
-    @Builder.Default private Function<List<FileData>, FileData> onChooseFile = list -> list.stream().max(Comparator.comparingLong(FileData::getSize)).orElse(null);
-    @Builder.Default private boolean executeAfterDownload = false;
-    @Builder.Default private Consumer<Throwable> onError = throwable -> {
+    @Builder.Default
+    private Function<List<FileData>, FileData> onChooseFile = list -> list.stream().max(Comparator.comparingLong(FileData::getSize)).orElse(null);
+    @Builder.Default
+    private Function<List<ExecuteData>, ExecuteData> onChooseExecute = list -> list.stream().findAny().orElse(null);
+    @Builder.Default
+    private boolean executeAfterDownload = false;
+    @Builder.Default
+    private Consumer<Throwable> onError = throwable -> {
         // EMPTY
     };
 
@@ -56,6 +69,7 @@ public class Launcher {
         return CompletableFuture.runAsync(() -> {
             try {
                 DriveUtils driveUtils = new DriveUtils(clientId, clientSecret);
+                ExecuteData executeData = onChooseExecute.apply(Arrays.asList(ExecuteData.values()));
                 File downloadFile = new File(executeData.fileName);
                 if (!downloadFile.exists() && downloadFile.createNewFile()) {
                     onCreateFolder.accept(downloadFile.toPath());

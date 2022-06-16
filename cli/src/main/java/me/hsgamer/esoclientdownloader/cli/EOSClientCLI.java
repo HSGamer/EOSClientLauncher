@@ -48,7 +48,6 @@ public class EOSClientCLI {
         Launcher.builder()
                 .clientId(MainConfig.CLIENT_ID.getValue())
                 .clientSecret(MainConfig.CLIENT_SECRET.getValue())
-                .executeData(askAndGetExecute())
                 .connectWifi(MainConfig.AUTO_CONNECT_WIFI.getValue())
                 .deleteExistedFiles(MainConfig.FILE_DELETE_EXISTED_UNCOMPRESSED.getValue())
                 .executeAfterDownload(MainConfig.EXECUTE_FILE_AFTER_DOWNLOAD.getValue())
@@ -64,17 +63,18 @@ public class EOSClientCLI {
                         }
                     }
                 })
+                .onChooseExecute(EOSClientCLI::askAndGetExecuteData)
                 .onAlreadyDownload(path -> LOGGER.info(() -> "File " + path + " already downloaded"))
                 .onStartDownload(path -> LOGGER.info(() -> "Start downloading " + path))
                 .onFinishDownload(path -> LOGGER.info(() -> "Finish downloading " + path))
-                .onChooseFile(EOSClientCLI::askAndGet)
+                .onChooseFile(EOSClientCLI::askAndGetFileData)
                 .onError(throwable -> LOGGER.log(Level.SEVERE, throwable.getMessage(), throwable))
                 .onCreateFolder(path -> LOGGER.info(() -> "Create folder " + path))
                 .build()
                 .launch().join();
     }
 
-    private static FileData askAndGet(List<FileData> list) {
+    private static FileData askAndGetFileData(List<FileData> list) {
         if (list.isEmpty()) {
             throw new IllegalStateException("Can't find any file");
         }
@@ -100,11 +100,10 @@ public class EOSClientCLI {
         return list.get(index);
     }
 
-    private static ExecuteData askAndGetExecute() {
-        ExecuteData[] values = ExecuteData.values();
+    private static ExecuteData askAndGetExecuteData(List<ExecuteData> list) {
         LOGGER.info(() -> "Available execute data:");
-        for (int i = 0; i < values.length; i++) {
-            ExecuteData executeData = values[i];
+        for (int i = 0; i < list.size(); i++) {
+            ExecuteData executeData = list.get(i);
             int finalI = i;
             LOGGER.info(() -> "  " + finalI + ": " + executeData.name());
         }
@@ -117,7 +116,7 @@ public class EOSClientCLI {
             } catch (Exception ignored) {
                 LOGGER.info("Will choose the first execute data");
             }
-        } while (index < 0 || index >= values.length);
-        return values[index];
+        } while (index < 0 || index >= list.size());
+        return list.get(index);
     }
 }
