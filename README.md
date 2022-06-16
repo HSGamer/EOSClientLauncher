@@ -18,8 +18,9 @@
 
 0. Create your Drive project and get its Client ID and Client Secret
     * [The Tutorial](https://theonetechnologies.com/blog/post/how-to-get-google-app-client-id-and-client-secret)
-1. Create a run script named `start.bat`
-2. Add this line to `start.bat`
+1. Download the jar file
+2. Create a run script named `start.bat` at the same directory as the jar file
+3. Add this line to `start.bat`
 ```bat
 java -jar eos-cli.jar
 ```
