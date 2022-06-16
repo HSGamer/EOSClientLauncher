@@ -53,9 +53,9 @@ public class Launcher {
     };
 
     public CompletableFuture<Void> launch() {
-        DriveUtils driveUtils = new DriveUtils(clientId, clientSecret);
         return CompletableFuture.runAsync(() -> {
             try {
+                DriveUtils driveUtils = new DriveUtils(clientId, clientSecret);
                 File downloadFile = new File(executeData.fileName);
                 if (!downloadFile.exists() && downloadFile.createNewFile()) {
                     onCreateFolder.accept(downloadFile.toPath());
@@ -100,6 +100,9 @@ public class Launcher {
                         executor.get().execute(clientPath, connectWifi).join();
                     }
                 }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                e.printStackTrace();
             } catch (Throwable throwable) {
                 onError.accept(throwable);
             }
