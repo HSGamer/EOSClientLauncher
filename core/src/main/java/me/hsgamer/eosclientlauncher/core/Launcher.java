@@ -22,6 +22,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Builder
@@ -55,9 +56,11 @@ public class Launcher {
         // EMPTY
     };
     @Builder.Default
-    private Function<List<FileData>, FileData> onChooseFile = list -> list.stream().max(Comparator.comparingLong(FileData::getSize)).orElse(null);
+    private Function<List<FileData>, FileData> onChooseFileData = list -> list.stream().max(Comparator.comparingLong(FileData::getSize)).orElse(null);
     @Builder.Default
-    private Function<List<ExecuteData>, ExecuteData> onChooseExecute = list -> list.stream().findAny().orElse(null);
+    private Function<List<ExecuteData>, ExecuteData> onChooseExecuteData = list -> list.stream().findAny().orElse(null);
+    @Builder.Default
+    private Function<List<Path>, Path> onChooseExecutePath = list -> list.stream().findFirst().orElse(null);
     @Builder.Default
     private boolean executeAfterDownload = false;
     @Builder.Default
@@ -69,12 +72,12 @@ public class Launcher {
         return CompletableFuture.runAsync(() -> {
             try {
                 DriveUtils driveUtils = new DriveUtils(clientId, clientSecret);
-                ExecuteData executeData = onChooseExecute.apply(Arrays.asList(ExecuteData.values()));
+                ExecuteData executeData = onChooseExecuteData.apply(Arrays.asList(ExecuteData.values()));
                 File downloadFile = new File(executeData.fileName);
                 if (!downloadFile.exists() && downloadFile.createNewFile()) {
                     onCreateFolder.accept(downloadFile.toPath());
                 }
-                FileData fileData = onChooseFile.apply(driveUtils.getFiles(executeData.clientId));
+                FileData fileData = onChooseFileData.apply(driveUtils.getFiles(executeData.clientId));
                 String currentMd5 = Utils.getFileChecksum(downloadFile);
                 if (currentMd5.equalsIgnoreCase(fileData.getMd5())) {
                     onAlreadyDownload.accept(downloadFile.toPath());
@@ -104,13 +107,11 @@ public class Launcher {
                 }
                 List<Path> files = ZipUtils.unzip(downloadFile, uncompressedFolder);
 
-                Path clientPath = files.stream()
-                        .filter(executeData.executeFileCheck)
-                        .findFirst()
-                        .orElseThrow(() -> new IllegalStateException("Can't find Client folder"));
                 if (executeAfterDownload) {
+                    List<Path> clientPaths = files.stream().filter(executeData.executeFileCheck).collect(Collectors.toList());
+                    Path clientPath = onChooseExecutePath.apply(clientPaths);
                     Optional<Executor> executor = Executors.getBestExecutor();
-                    if (executor.isPresent()) {
+                    if (executor.isPresent() && clientPath != null) {
                         executor.get().execute(clientPath, connectWifi).join();
                     }
                 }

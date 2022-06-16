@@ -63,11 +63,11 @@ public class EOSClientCLI {
                         }
                     }
                 })
-                .onChooseExecute(EOSClientCLI::askAndGetExecuteData)
+                .onChooseExecuteData(EOSClientCLI::askAndGetExecuteData)
+                .onChooseFileData(EOSClientCLI::askAndGetFileData)
                 .onAlreadyDownload(path -> LOGGER.info(() -> "File " + path + " already downloaded"))
                 .onStartDownload(path -> LOGGER.info(() -> "Start downloading " + path))
                 .onFinishDownload(path -> LOGGER.info(() -> "Finish downloading " + path))
-                .onChooseFile(EOSClientCLI::askAndGetFileData)
                 .onError(throwable -> LOGGER.log(Level.SEVERE, throwable.getMessage(), throwable))
                 .onCreateFolder(path -> LOGGER.info(() -> "Create folder " + path))
                 .build()
