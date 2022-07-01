@@ -40,17 +40,17 @@ public class EOSClientCLI {
         });
         LOGGER.addHandler(handler);
         LOGGER.setUseParentHandlers(false);
-
-        new MainConfig().setup();
     }
 
     public static void main(String... args) {
+        MainConfig config = new MainConfig();
+        config.setup();
         Launcher.builder()
-                .clientId(MainConfig.CLIENT_ID.getValue())
-                .clientSecret(MainConfig.CLIENT_SECRET.getValue())
-                .connectWifi(MainConfig.AUTO_CONNECT_WIFI.getValue())
-                .deleteExistedFiles(MainConfig.FILE_DELETE_EXISTED_UNCOMPRESSED.getValue())
-                .executeAfterDownload(MainConfig.EXECUTE_FILE_AFTER_DOWNLOAD.getValue())
+                .clientId(config.clientId)
+                .clientSecret(config.clientSecret)
+                .connectWifi(config.autoConnectWifi)
+                .deleteExistedFiles(config.deleteExistedFiles)
+                .executeAfterDownload(config.executeFileAfterDownload)
                 .progressConsumer(new BiConsumer<Long, Long>() {
                     int times = 0;
 

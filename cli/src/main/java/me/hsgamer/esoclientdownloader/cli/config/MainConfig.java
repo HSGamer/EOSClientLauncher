@@ -1,10 +1,8 @@
 package me.hsgamer.esoclientdownloader.cli.config;
 
-import me.hsgamer.hscore.config.PathableConfig;
-import me.hsgamer.hscore.config.path.CommentablePath;
-import me.hsgamer.hscore.config.path.ConfigPath;
-import me.hsgamer.hscore.config.path.impl.BooleanConfigPath;
-import me.hsgamer.hscore.config.path.impl.StringConfigPath;
+import me.hsgamer.hscore.config.annotated.AnnotatedConfig;
+import me.hsgamer.hscore.config.annotation.Comment;
+import me.hsgamer.hscore.config.annotation.ConfigPath;
 import me.hsgamer.hscore.config.simpleconfiguration.SimpleConfig;
 import org.simpleyaml.configuration.file.YamlFile;
 
@@ -12,27 +10,26 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 
-public class MainConfig extends PathableConfig {
-    public static final ConfigPath<String> CLIENT_ID = new CommentablePath<>(
-            new StringConfigPath("client.id", ""),
-            "The client's ID"
-    );
-    public static final ConfigPath<String> CLIENT_SECRET = new CommentablePath<>(
-            new StringConfigPath("client.secret", ""),
-            "The client's secret key"
-    );
-    public static final ConfigPath<Boolean> FILE_DELETE_EXISTED_UNCOMPRESSED = new CommentablePath<>(
-            new BooleanConfigPath("file.delete-existed-files", false),
-            "Should the existed files be deleted before uncompressing ?"
-    );
-    public static final ConfigPath<Boolean> AUTO_CONNECT_WIFI = new CommentablePath<>(
-            new BooleanConfigPath("auto-connect-wifi", false),
-            "Should the launcher automatically connect to the wifi network ?"
-    );
-    public static final ConfigPath<Boolean> EXECUTE_FILE_AFTER_DOWNLOAD = new CommentablePath<>(
-            new BooleanConfigPath("execute-file-after-download", true),
-            "Should the launcher execute the file after downloading ?"
-    );
+public class MainConfig extends AnnotatedConfig {
+    @ConfigPath("client.id")
+    @Comment("The client's ID")
+    public final String clientId;
+
+    @ConfigPath("client.secret")
+    @Comment("The client's secret key")
+    public final String clientSecret;
+
+    @ConfigPath("file.delete-existed-files")
+    @Comment("Should the existed files be deleted before uncompressing ?")
+    public final boolean deleteExistedFiles;
+
+    @ConfigPath("auto-connect-wifi")
+    @Comment("Should the launcher automatically connect to the wifi network ?")
+    public final boolean autoConnectWifi;
+
+    @ConfigPath("execute-file-after-download")
+    @Comment("Should the launcher execute the file after downloading ?")
+    public final boolean executeFileAfterDownload;
 
     public MainConfig() {
         super(new SimpleConfig<>(new File(".", "config.yml"), new YamlFile(), (file, yamlFile) -> {
@@ -43,5 +40,10 @@ public class MainConfig extends PathableConfig {
                 LOGGER.log(Level.WARNING, e.getMessage(), e);
             }
         }));
+        clientId = "";
+        clientSecret = "";
+        deleteExistedFiles = false;
+        autoConnectWifi = false;
+        executeFileAfterDownload = true;
     }
 }
