@@ -6,12 +6,12 @@ import java.util.function.Predicate;
 public enum ExecuteData {
     EOS_CLIENT(
             "EOSClient.zip",
-            "10sGYKJCvNNra6WAnAsILFLd2qBbd9043",
+            "1akRf3fgQkEu9DcXAdGHwk0BXYuqG31Am",
             "EOSClient.exe"
     ),
     PEA_CLIENT(
             "PEAClient.zip",
-            "1Yxp0nua82PHc0UShAss4mxDpRngP2Bbt",
+            "1ynjfBepM3JoYjMsi4ijwJ1hj6FP0mZhF",
             "PEALogin.exe"
     );
 
