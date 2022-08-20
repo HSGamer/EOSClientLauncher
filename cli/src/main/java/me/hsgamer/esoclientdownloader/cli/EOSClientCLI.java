@@ -8,6 +8,7 @@ import me.hsgamer.esoclientdownloader.cli.config.MainConfig;
 import java.util.List;
 import java.util.Scanner;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.logging.*;
 
 public class EOSClientCLI {
@@ -74,49 +75,38 @@ public class EOSClientCLI {
                 .launch().join();
     }
 
-    private static FileData askAndGetFileData(List<FileData> list) {
+    private static <T> T askAndGet(List<T> list, String message, String prompt, Function<T, String> displayFunction) {
         if (list.isEmpty()) {
             throw new IllegalStateException("Can't find any file");
         }
         if (list.size() == 1) {
             return list.get(0);
         }
-        LOGGER.info(() -> "Available file data:");
+        LOGGER.info(() -> message + ":");
         Scanner scanner = new Scanner(System.in);
         int index = 0;
         for (int i = 0; i < list.size(); i++) {
-            FileData fileData = list.get(i);
+            T data = list.get(i);
             int finalI = i;
-            LOGGER.info(() -> "  " + finalI + ": " + fileData.getName());
+            LOGGER.info(() -> "  " + finalI + ": " + displayFunction.apply(data));
         }
-        System.out.print("Please enter the number of the file you want to download: ");
+        System.out.print(prompt + ": ");
         do {
             try {
                 index = Integer.parseInt(scanner.nextLine());
             } catch (Exception ignored) {
-                LOGGER.info("Will download the first file");
+                index = 0;
+                LOGGER.info("Will choose the first one");
             }
         } while (index < 0 || index >= list.size());
         return list.get(index);
     }
 
+    private static FileData askAndGetFileData(List<FileData> list) {
+        return askAndGet(list, "Available file data", "Please enter the number of the file you want to download", FileData::getName);
+    }
+
     private static ExecuteData askAndGetExecuteData(List<ExecuteData> list) {
-        LOGGER.info(() -> "Available execute data:");
-        for (int i = 0; i < list.size(); i++) {
-            ExecuteData executeData = list.get(i);
-            int finalI = i;
-            LOGGER.info(() -> "  " + finalI + ": " + executeData.name());
-        }
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Please enter the number of the execute data you want to use: ");
-        int index = 0;
-        do {
-            try {
-                index = Integer.parseInt(scanner.nextLine());
-            } catch (Exception ignored) {
-                LOGGER.info("Will choose the first execute data");
-            }
-        } while (index < 0 || index >= list.size());
-        return list.get(index);
+        return askAndGet(list, "Available execute data", "Please enter the number of the execute data you want to use", Enum::name);
     }
 }
