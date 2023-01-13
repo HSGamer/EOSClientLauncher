@@ -1,3 +1,5 @@
+I graduated, so there is no reason to continue this.
+
 # EOSClientLauncher
 
 ## Info
